@@ -14,19 +14,19 @@ module.exports = {
     guide: "{p}omaigotto <text> or reply to a message with {p}omaigotto",
   },
 
-  onStart: async function ({ api, event, args }) {
-    let text = args.join(" ");
-
-    // Check for replied message if no text is provided
-    if (!text && event.messageReply) {
-      text = event.messageReply.body; // Get text from the replied message
-    }
-
-    if (!text) {
-      return api.sendMessage("❌ Please provide some text for the TTS conversion.", event.threadID);
-    }
-
+  start: async function ({ api, event, args }) {
     try {
+      let text = args.join(" ");
+
+      // Check for replied message if no text is provided
+      if (!text && event.messageReply) {
+        text = event.messageReply.body;
+      }
+
+      if (!text) {
+        return api.sendMessage("❌ Please provide some text for the TTS conversion.", event.threadID);
+      }
+
       // Step 1: Translate text to Japanese
       const { text: translatedText } = await translate(text, "ja");
 
@@ -69,6 +69,6 @@ async function translate(text, langCode) {
   );
   return {
     text: res.data[0].map(item => item[0]).join(''),
-    lang: res.data[2]
+    lang: res.data[2],
   };
 }
